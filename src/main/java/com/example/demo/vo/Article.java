@@ -11,4 +11,9 @@ public class Article {
 	int id;
 	String title;
 	String body;
+
+	public void updateArticle(String title, String body) {
+		this.title = title;
+		this.body = body;
+	}
 }
