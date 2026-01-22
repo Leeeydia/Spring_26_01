@@ -11,6 +11,23 @@ CREATE TABLE article (
                          `body` TEXT NOT NULL
 );
 
+# 회원 테이블
+CREATE TABLE `member` (
+		 id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+		 regDate DATETIME NOT NULL,
+		 updateDate DATETIME NOT NULL,
+		 loginId CHAR(30) NOT NULL,
+		 loginPw CHAR(100) NOT NULL,
+		 `authLevel` SMALLINT(2) UNSIGNED DEFAULT 3 COMMENT '권한 레벨 (3=일반,7=관리자)',
+		 `name` CHAR(20) NOT NULL,
+		 nickname CHAR(20) NOT NULL,
+		 cellphoneNum CHAR(20) NOT NULL,
+		 email CHAR(20) NOT NULL,
+		 delStatus TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '탈퇴 여부 (0=탈퇴 전, 1=탈퇴 후)',
+		 delDate DATETIME COMMENT '탈퇴 날짜'
+);
+
+
 
 
 # 게시글 TD
@@ -32,13 +49,51 @@ updateDate = NOW(),
 title = '제목3',
 `body` = '내용3';
 
+# 회원 TD
+INSERT INTO `member`
+SET regDate = NOW(),
+updateDate = NOW(),
+loginId = 'admin',
+loginPw = 'admin',
+`authLevel` = 7,
+`name` = '관리자',
+nickname = '관리자_별명',
+cellphoneNum = '01012341234',
+email = 'abc@gmail.com';
+
+INSERT INTO `member`
+SET regDate = NOW(),
+updateDate = NOW(),
+loginId = 'test1',
+loginPw = 'test1',
+`name` = '회원1',
+nickname = '회원1_별명',
+cellphoneNum = '01043214321',
+email = 'abcd@gmail.com';
+
+INSERT INTO `member`
+SET regDate = NOW(),
+updateDate = NOW(),
+loginId = 'test2',
+loginPw = 'test2',
+`name` = '회원2',
+nickname = '회원2_별명',
+cellphoneNum = '01056785678',
+email = 'abced@gmail.com';
+
 DESC article;
 
 SELECT *
 FROM article ORDER BY id DESC;
 
 
+SELECT *
+FROM `member`;
+
+
 ##===============================###################### 테스트
+
+SELECT LAST_INSERT_ID();
 
 INSERT INTO article SET regDate = NOW(), title = '제목1', `body` = '내용1'; , DATA=[, ]
 
