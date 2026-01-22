@@ -18,9 +18,9 @@ public class Article {
 		this.body = body;
 	}
 
-	int id;
-	LocalDateTime regDate;
-	LocalDateTime updateDate;
-	String title;
-	String body;
+	private int id;
+	private LocalDateTime regDate;
+	private LocalDateTime updateDate;
+	private String title;
+	private String body;
 }
