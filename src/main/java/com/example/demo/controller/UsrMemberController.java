@@ -10,11 +10,17 @@ import com.example.demo.util.Ut;
 import com.example.demo.vo.Member;
 import com.example.demo.vo.ResultData;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class UsrMemberController {
 
 	@Autowired
 	private MemberService memberService;
+
+	public UsrMemberController(MemberService memberService) {
+		this.memberService = memberService;
+	}
 
 	@RequestMapping("/usr/member/doJoin")
 	@ResponseBody
@@ -31,7 +37,7 @@ public class UsrMemberController {
 			return ResultData.from("F-3", "name 입력해");
 		}
 		if (Ut.isEmptyOrNull(nickname)) {
-			return ResultData.from("F-4", "nickname 입력해"); 
+			return ResultData.from("F-4", "nickname 입력해");
 		}
 		if (Ut.isEmptyOrNull(cellphoneNum)) {
 			return ResultData.from("F-5", "cellphoneNum 입력해");
@@ -49,6 +55,48 @@ public class UsrMemberController {
 		Member member = memberService.getMemberById((int) doJoinRd.getData1());
 
 		return ResultData.newData(doJoinRd, member);
+	}
+
+	@RequestMapping("/usr/member/doLogin")
+	@ResponseBody
+
+	public ResultData doLogin(String loginId, String loginPw, HttpSession session) {
+
+		boolean isLogined = false;
+		if (session.getAttribute(loginedMemberId) != null) {
+			isLogined = true;
+
+		}
+
+		if (isLogined) {
+			return ResultData.from("F-A", "이미 로그인 중");
+		}
+
+		if (Ut.isEmptyOrNull(loginId)) {
+			return ResultData.from("F-1", "loginId 입력해");
+		}
+
+		if (Ut.isEmptyOrNull(loginPw)) {
+			return ResultData.from("F-2", "loginPw 입력해");
+		}
+
+		int memberId = memberService.login(loginId, loginPw);
+
+		if (memberId == -1) {
+			return ResultData.from("F-3", "아이디 또는 비밀번호가 틀렸습니다");
+		}
+
+		session.setAttribute("loginedMemberId", memberId);
+
+		return ResultData.from("S-1", "로그인 성공");
+
+	}
+
+	@RequestMapping("/usr/member/doLogout")
+	@ResponseBody
+
+	public ResultData doLogout(HttpSession session) {
+
 	}
 
 }
