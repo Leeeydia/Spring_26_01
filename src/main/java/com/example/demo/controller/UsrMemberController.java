@@ -18,8 +18,40 @@ public class UsrMemberController {
 	@Autowired
 	private MemberService memberService;
 
-	public UsrMemberController(MemberService memberService) {
-		this.memberService = memberService;
+	@RequestMapping("/usr/member/doLogin")
+	@ResponseBody
+	public ResultData<Member> doLogin(HttpSession session, String loginId, String loginPw) {
+
+		boolean isLogined = false;
+
+		if (session.getAttribute("loginedMemberId") != null) {
+			isLogined = true;
+		}
+
+		if (isLogined) {
+			return ResultData.from("F-A", "이미 로그인중");
+		}
+
+		if (Ut.isEmptyOrNull(loginId)) {
+			return ResultData.from("F-1", "loginId 입력해");
+		}
+		if (Ut.isEmptyOrNull(loginPw)) {
+			return ResultData.from("F-2", "loginPw 입력해");
+		}
+
+		Member member = memberService.getMemberByLoginId(loginId);
+
+		if (member == null) {
+			return ResultData.from("F-3", Ut.f("%s는 없는 아이디", loginId));
+		}
+
+		if (member.getLoginPw().equals(loginPw) == false) {
+			return ResultData.from("F-4", "비밀번호 x");
+		}
+
+		session.setAttribute("loginedMemberId", member.getId());
+
+		return ResultData.from("S-1", Ut.f("%s님 환영합니다", member.getNickname()), member);
 	}
 
 	@RequestMapping("/usr/member/doJoin")
@@ -55,48 +87,6 @@ public class UsrMemberController {
 		Member member = memberService.getMemberById((int) doJoinRd.getData1());
 
 		return ResultData.newData(doJoinRd, member);
-	}
-
-	@RequestMapping("/usr/member/doLogin")
-	@ResponseBody
-
-	public ResultData doLogin(String loginId, String loginPw, HttpSession session) {
-
-		boolean isLogined = false;
-		if (session.getAttribute(loginedMemberId) != null) {
-			isLogined = true;
-
-		}
-
-		if (isLogined) {
-			return ResultData.from("F-A", "이미 로그인 중");
-		}
-
-		if (Ut.isEmptyOrNull(loginId)) {
-			return ResultData.from("F-1", "loginId 입력해");
-		}
-
-		if (Ut.isEmptyOrNull(loginPw)) {
-			return ResultData.from("F-2", "loginPw 입력해");
-		}
-
-		int memberId = memberService.login(loginId, loginPw);
-
-		if (memberId == -1) {
-			return ResultData.from("F-3", "아이디 또는 비밀번호가 틀렸습니다");
-		}
-
-		session.setAttribute("loginedMemberId", memberId);
-
-		return ResultData.from("S-1", "로그인 성공");
-
-	}
-
-	@RequestMapping("/usr/member/doLogout")
-	@ResponseBody
-
-	public ResultData doLogout(HttpSession session) {
-
 	}
 
 }
