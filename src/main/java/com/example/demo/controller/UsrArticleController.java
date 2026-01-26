@@ -22,6 +22,16 @@ public class UsrArticleController {
 	private ArticleService articleService;
 
 	// 액션메서드
+	@RequestMapping("/usr/article/detail")
+	public String showDetail(int id, Model model) {
+		Article article = articleService.getArticleById(id);
+
+		model.addAttribute("article", article);
+
+		return "/usr/article/detail";
+	}
+
+
 	@RequestMapping("/usr/article/getArticle")
 	@ResponseBody
 	public ResultData<Article> getArticle(int id) {
