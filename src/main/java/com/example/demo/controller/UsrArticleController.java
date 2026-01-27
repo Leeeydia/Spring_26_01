@@ -23,9 +23,17 @@ public class UsrArticleController {
 
 	// 액션메서드
 	@RequestMapping("/usr/article/detail")
-	public String showDetail(Model model, int id) {
+	public String showDetail(HttpSession session, Model model, int id) {
 
-		Article article = articleService.getArticleById(id);
+		boolean isLogined = false;
+		int loginedMemberId = 0;
+
+		if (session.getAttribute("loginedMemberId") != null) {
+			isLogined = true;
+			loginedMemberId = (int) session.getAttribute("loginedMemberId");
+		}
+
+		Article article = articleService.getForPrintArticle(loginedMemberId, id);
 
 		model.addAttribute("article", article);
 
@@ -54,17 +62,19 @@ public class UsrArticleController {
 			return ResultData.from("F-1", Ut.f("%d번 게시글은 없어", id));
 		}
 
-		ResultData loginedMemberCanModifyRd = articleService.loginedMemberCanModify(loginedMemberId, article);
+		ResultData userCanModifyRd = articleService.userCanModify(loginedMemberId, article);
 
-		if (loginedMemberCanModifyRd.isFail()) {
-			return ResultData.from(loginedMemberCanModifyRd.getResultCode(), loginedMemberCanModifyRd.getMsg());
+		if (userCanModifyRd.isFail()) {
+			return userCanModifyRd;
 		}
 
-		articleService.modifyArticle(id, title, body);
+		if (userCanModifyRd.isSuccess()) {
+			articleService.modifyArticle(id, title, body);
+		}
+
 		article = articleService.getArticleById(id);
 
-		return ResultData.from(loginedMemberCanModifyRd.getResultCode(), loginedMemberCanModifyRd.getMsg(),
-				"이번에 수정된 글 ", article);
+		return ResultData.from(userCanModifyRd.getResultCode(), userCanModifyRd.getMsg(), "이번에 수정된 글 ", article);
 	}
 
 	@RequestMapping("/usr/article/doDelete")
@@ -89,11 +99,15 @@ public class UsrArticleController {
 			return ResultData.from("F-1", Ut.f("%d번 게시글은 없어", id));
 		}
 
-		if (article.getMemberId() != loginedMemberId) {
-			return ResultData.from("F-A2", "권한없음");
+		ResultData userCanDeleteRd = articleService.userCanDelete(loginedMemberId, article);
+
+		if (userCanDeleteRd.isFail()) {
+			return userCanDeleteRd;
 		}
 
-		articleService.deleteArticle(id);
+		if (userCanDeleteRd.isSuccess()) {
+			articleService.deleteArticle(id);
+		}
 
 		return ResultData.from("S-1", Ut.f("%d번 게시글이 삭제됨", id), "이번에 삭제된 게시글의 id", id);
 	}
