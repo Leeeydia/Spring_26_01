@@ -3,9 +3,11 @@ package com.example.demo.util;
 import java.lang.reflect.Array;
 import java.util.Map;
 
+import com.example.demo.vo.Article;
+
 public class Ut {
 
-	public static String jsReplace(String resultCode, String msg, String replaceUri) {
+	public static String jsReplace(String resultCode, String msg, String replaceUri, Article article) {
 		if (resultCode == null) {
 			resultCode = "";
 		}
