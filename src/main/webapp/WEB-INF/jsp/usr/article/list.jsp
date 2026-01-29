@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<c:set var="pageTitle" value="ARTICLE LIST" />
+<c:set var="pageTitle" value="ARTICLE LIST"></c:set>
 
 <%@ include file="../common/head.jspf"%>
 
@@ -9,9 +9,8 @@
 
 <section class="mt-8 text-xl px-4">
 	<div class="mx-auto">
+		<table class="table" border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse;">
 
-		<table border="1" cellspacing="0" cellpadding="5"
-			style="width: 100%; border-collapse: collapse;">
 
 			<thead>
 				<tr>
@@ -21,35 +20,19 @@
 					<th style="text-align: center;">Writer</th>
 				</tr>
 			</thead>
-
 			<tbody>
-				<c:forEach var="article" items="${articles}">
-					<tr>
-						<td style="text-align: center;">${article.id}</td>
+				<c:forEach var="article" items="${articles }">
+					<tr class="hover:bg-base-300">
+						<td style="text-align: center;">${article.id }</td>
+						<td style="text-align: center;">${article.regDate.substring(0,10) }</td>
 						<td style="text-align: center;">
-							${article.regDate.substring(0,10)}
+							<a href="detail?id=${article.id } ">${article.title }</a>
 						</td>
-						<td style="text-align: center;">
-							<a href="detail?id=${article.id}">
-								${article.title}
-							</a>
-						</td>
-						<td style="text-align: center;">
-							${article.extra__writer}
-						</td>
+						<td style="text-align: center;">${article.extra__writer }</td>
 					</tr>
 				</c:forEach>
 			</tbody>
-
 		</table>
-
-		<!-- 작성하기 버튼 -->
-		<div style="text-align: right; margin-top: 12px;">
-			<a href="/usr/article/write">
-				<button type="button">작성하기</button>
-			</a>
-		</div>
-
 	</div>
 </section>
 
