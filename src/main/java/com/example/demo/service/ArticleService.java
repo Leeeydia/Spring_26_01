@@ -100,4 +100,14 @@ public class ArticleService {
 		return articleRepository.getArticlesCount(boardId);
 	}
 
+	public int getPageCount(int numPerPage, int dataCount) {
+		int pageCount = dataCount / numPerPage;
+
+		if (dataCount % numPerPage != 0) {
+			pageCount++;
+		}
+
+		return pageCount;
+	}
+
 }
